@@ -2,6 +2,7 @@ import streamlit as st
 from streamlit_folium import st_folium
 import folium
 from api.obis_api import buscar_ocorrencias_por_area
+from api.inaturalist_api import buscar_imagem_especie
 
 st.set_page_config(page_title="Mapa de Espécies", page_icon="🗺️", layout="wide")
 st.title("🌍 Mapa de Espécies Marinhas")
@@ -50,3 +51,20 @@ if st.session_state.resultados:
 
 # Renderiza o mapa (sempre aparece)
 st_folium(m, width=1000, height=600)
+
+if st.session_state.resultados:
+    st.subheader("🔍 Espécies Encontradas na Área")
+
+    # Pega nomes únicos (e válidos) de espécies
+    especies_unicas = list({r.get("scientificName") for r in resultados_validos if r.get("scientificName")})
+
+    # Limita a 20 para performance
+    especies_exibir = especies_unicas[:20]
+
+    for especie in especies_exibir:
+        imagem = buscar_imagem_especie(especie)
+        
+        if imagem:
+            st.image(imagem, caption=especie, width=120)
+        else:
+            st.write(f"🖼️ Imagem não encontrada para {especie}.")

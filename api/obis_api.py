@@ -1,4 +1,5 @@
 import requests
+import random
 
 OBIS_BASE_URL = "https://api.obis.org/v3/occurrence"
 
@@ -12,11 +13,16 @@ def buscar_ocorrencias_por_area(lat, lon, raio_km, limite=100):
         min_lon = lon - delta
         max_lon = lon + delta
 
+        offset = random.randint(0, 3000)
+
         url = (
-            f"https://api.obis.org/v3/occurrence?"
+            f"{OBIS_BASE_URL}?"
             f"decimalLatitude>={min_lat}&decimalLatitude<={max_lat}"
             f"&decimalLongitude>={min_lon}&decimalLongitude<={max_lon}"
-            f"&size={limite}"
+            f"&kingdom=Animalia"
+            f"&hasCoordinate=true"
+            f"&hasDepth=true"
+            f"&size={limite}&offset={offset}"
         )
         
         print(f"🔍 URL usada: {url}")
