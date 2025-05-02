@@ -8,9 +8,36 @@ from math import radians, cos, sin, sqrt, atan2
 st.set_page_config(page_title="Mapa de Espécies", page_icon="🗺️", layout="wide")
 st.title("🌍 Mapa de Espécies Marinhas")
 
-# Inputs
-lat = st.number_input("Latitude", value=-32.0)
-lon = st.number_input("Longitude", value=153.0)
+# 📍 Localizações pré-definidas
+paises = {
+    "Brasil": {"lat": -23.0, "lon": -43.0},
+    "Austrália": {"lat": -32.0, "lon": 153.0},
+    "África do Sul": {"lat": -35.0, "lon": 18.0},
+    "Indonésia": {"lat": -5.0, "lon": 120.0},
+    "Canadá": {"lat": 49.0, "lon": -64.0},
+    "Reino Unido": {"lat": 51.5, "lon": -0.1},
+    "Estados Unidos": {"lat": 34.0, "lon": -119.0},
+    "Nova Zelândia": {"lat": -41.0, "lon": 174.0},
+    "França": {"lat": 46.0, "lon": 2.0},
+    "Noruega": {"lat": 60.0, "lon": 8.0},
+    "Japão": {"lat": 36.0, "lon": 138.0},
+    "Portugal": {"lat": 41.0, "lon": -9.0},
+    "Mundo todo": {"lat": 0.0, "lon": 0.0},
+}
+
+# 🌍 Seleção de entrada
+opcao = st.radio("Escolha como deseja inserir os dados:", ("Manual", "Por País"))
+
+if opcao == "Manual":
+    lat = st.number_input("Latitude", value=-32.0)
+    lon = st.number_input("Longitude", value=153.0)
+else:
+    pais_selecionado = st.selectbox("Escolha um país:", list(paises.keys()))
+    lat = paises[pais_selecionado]["lat"]
+    lon = paises[pais_selecionado]["lon"]
+    st.write(f"Coordenadas selecionadas: Latitude {lat}, Longitude {lon}")
+
+# Raio e limite
 raio = st.slider("Raio da busca (km)", 10, 500, 50)
 limite = st.slider("Número máximo de registros", 10, 500, 100)
 

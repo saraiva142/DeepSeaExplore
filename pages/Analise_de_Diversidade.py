@@ -15,6 +15,12 @@ paises = {
     "Indonésia": {"lat": -5.0, "lon": 120.0, "raio": 300},
     "Canadá": {"lat": 49.0, "lon": -64.0, "raio": 300},
     "Reino Unido": {"lat": 51.5, "lon": -0.1, "raio": 300},
+    "Estados Unidos": {"lat": 34.0, "lon": -119.0, "raio": 300},
+    "Nova Zelândia": {"lat": -41.0, "lon": 174.0, "raio": 300},
+    "França": {"lat": 46.0, "lon": 2.0, "raio": 300},
+    "Noruega": {"lat": 60.0, "lon": 8.0, "raio": 300},
+    "Japão": {"lat": 36.0, "lon": 138.0, "raio": 300},
+    "Portugal": {"lat": 41.0, "lon": -9.0, "raio": 300},
     "Mundo todo": {"lat": 0.0, "lon": 0.0, "raio": 15000}
 }
 
