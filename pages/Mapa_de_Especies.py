@@ -99,7 +99,7 @@ if resultados_validos:
     st.subheader("🔍 Espécies Encontradas na Área")
 
     especies_unicas = list({r.get("scientificName") for r in resultados_validos if r.get("scientificName")})
-    especies_exibir = especies_unicas[:20]
+    especies_exibir = especies_unicas[:100]
 
     for especie in especies_exibir:
         imagem = buscar_imagem_especie(especie)

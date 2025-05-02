@@ -41,5 +41,5 @@ def DeepSeaExplore():
         unsafe_allow_html=True
     )
 
-pg = st.navigation([DeepSeaExplore, "./pages/Mapa_de_Especies.py", "./pages/Analise_de_Diversidade.py"])
+pg = st.navigation([DeepSeaExplore, "./pages/Mapa_de_Especies.py", "./pages/Analise_de_Diversidade.py", "./pages/Descobertas_Curiosas.py"])
 pg.run()
