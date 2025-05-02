@@ -10,7 +10,7 @@ def mostrar_overview():
     - 🌍 Mapa interativo com espécies registradas por localização
     - 📊 Gráficos de diversidade ao longo do tempo
     - 🧬 Modo “Descobertas Curiosas”
-    - 🌌 Modo “Noite Marinha”
+    - 🌌 (em breve) Modo “Noite Marinha”
     - 🎙️ (em breve) Comandos por voz usando Whisper
 
     ---

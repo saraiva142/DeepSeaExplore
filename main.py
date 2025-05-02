@@ -13,9 +13,33 @@ def DeepSeaExplore():
     # Barra lateral com navegação
     #st.sidebar.title("🔎 Navegação")
 
-    # Corpo da página
-    st.title("🌊 DeepSea Explorer")
-    overview.mostrar_overview()
 
-pg = st.navigation([DeepSeaExplore, "./pages/Mapa_de_Especies.py", "./pages/teste_mapa.py"])
+    # Corpo da página
+    st.title("DeepSea Explorer")
+    st.image("./assets/banner.png", width=700)
+    overview.mostrar_overview()
+    
+    st.markdown(
+        """
+        <style>
+        .footer {
+            position: relative;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            text-align: center;
+            font-size: 12px;
+            color: gray;
+            padding: 10px 0;
+            margin-top: 50px;
+        }
+        </style>
+        <div class="footer">
+            Desenvolvido por João Saraiva 👨‍💻
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+
+pg = st.navigation([DeepSeaExplore, "./pages/Mapa_de_Especies.py"])
 pg.run()

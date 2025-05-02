@@ -7,8 +7,8 @@ st.set_page_config(page_title="Mapa de Espécies", page_icon="🗺️", layout="
 st.title("🌍 Mapa de Espécies Marinhas")
 
 # Inputs
-lat = st.number_input("Latitude", value=-12.97)
-lon = st.number_input("Longitude", value=-38.51)
+lat = st.number_input("Latitude", value=-32)
+lon = st.number_input("Longitude", value=153)
 raio = st.slider("Raio da busca (km)", 10, 500, 50)
 limite = st.slider("Número máximo de registros", 10, 500, 100)
 
