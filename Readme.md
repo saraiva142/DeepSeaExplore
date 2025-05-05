@@ -42,6 +42,7 @@
 ## 🛠️ Estrutura do Projeto
 
 Directory structure:
+```Bash
 └── saraiva142-deepseaexplore/
     ├── main.py
     ├── requirements.txt
@@ -59,7 +60,7 @@ Directory structure:
         ├── Analise_de_Diversidade.py
         ├── Descobertas_Curiosas.py
         └── Mapa_de_Especies.py
-
+```
 ---
 
 ## 🚀 Como Rodar Localmente
@@ -70,12 +71,14 @@ Directory structure:
    cd deep-sea-explorer
 
 2. Crie um ambiente virtual e instale as dependências:
-```python -m venv venv```
-```source venv/bin/activate  # ou venv\Scripts\activate no Windows ```
-```pip install -r requirements.txt```
+    ```bash
+    python -m venv venv
+    source venv/bin/activate  # ou venv\Scripts\activate no Windows 
+    pip install -r requirements.txt
 
 3. Rode a aplicação:
-```streamlit run main.py```
+    ```bash
+    streamlit run main.py```
 
 ## 🐠 Exemplos de Uso 
 * Investigar a biodiversidade ao redor das Ilhas Galápagos
