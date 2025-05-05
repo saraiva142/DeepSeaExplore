@@ -13,7 +13,7 @@ st.title("🔍 Descobertas Curiosas do Fundo do Mar")
 # 🧠 Palavras curiosas para filtrar nomes
 palavras_chave = [
     "salmo trutta", "copepoda", "decapoda", "surirella", "hydrozoa", "salmo salar", "avicennia",
-    "mammalia", "decapoda", "fiona", "tripos dens", "sebastes", "delphinus delphis", "calanoida", 
+    "decapoda", "fiona", "tripos dens", "sebastes", "delphinus delphis", "calanoida", 
     "oceanodroma", "podiceps cristatus", "doliolum", "doliolidae", "doliolum dentatum"
     
 ]
