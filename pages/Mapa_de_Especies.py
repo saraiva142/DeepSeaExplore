@@ -39,7 +39,7 @@ else:
 
 # Raio e limite
 raio = st.slider("Raio da busca (km)", 10, 500, 50)
-limite = st.slider("Número máximo de registros", 10, 500, 100)
+limite = st.slider("Número máximo de registros", 50, 5000, 1000)
 
 # Inicializa estado da sessão
 if "resultados" not in st.session_state:

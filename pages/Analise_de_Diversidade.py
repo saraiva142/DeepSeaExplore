@@ -28,7 +28,7 @@ paises = {
 pais_selecionado = st.selectbox("Escolha uma região para análise:", list(paises.keys()))
 config = paises[pais_selecionado]
 
-limite = st.slider("Número máximo de registros", 50, 1000, 300)
+limite = st.slider("Número máximo de registros", 50, 5000, 1000)
 
 # 📏 Fórmula de Haversine para filtro por raio real
 def distancia_km(lat1, lon1, lat2, lon2):
@@ -84,6 +84,7 @@ if st.button("📊 Analisar Diversidade"):
         if "year" in df.columns and df["year"].notna().sum() > 0:
             df_com_ano = df[df["year"].notna()]
             df_com_ano["year"] = df_com_ano["year"].astype(int)
+            df_com_ano = df_com_ano[df_com_ano["year"] >= 1880]  # Filtra anos irreais, pois tinha ano 0 aqui kkkk
 
             diversidade_ano = (
                 df_com_ano.groupby("year")["scientificName"]

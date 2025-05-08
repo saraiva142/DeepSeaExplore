@@ -3,7 +3,7 @@ import random
 
 OBIS_BASE_URL = "https://api.obis.org/v3/occurrence"
 
-def buscar_ocorrencias_por_area(lat, lon, raio_km, limite=100):
+def buscar_ocorrencias_por_area(lat, lon, raio_km, limite=10000):
     try:
         # Converte o raio de km para graus (aproximado: 1 grau ≈ 111 km)
         delta = raio_km / 111.0
@@ -13,15 +13,16 @@ def buscar_ocorrencias_por_area(lat, lon, raio_km, limite=100):
         min_lon = lon - delta
         max_lon = lon + delta
 
-        offset = random.randint(0, 3000)
-
+        # offset = random.randint(0, 3000)
+        offset = 0
+        
         url = (
             f"{OBIS_BASE_URL}?"
             f"decimalLatitude>={min_lat}&decimalLatitude<={max_lat}"
             f"&decimalLongitude>={min_lon}&decimalLongitude<={max_lon}"
-            f"&kingdom=Animalia"
+            #f"&kingdom=Animalia"
             f"&hasCoordinate=true"
-            f"&hasDepth=true"
+            # f"&hasDepth=true"
             f"&size={limite}&offset={offset}"
         )
         
