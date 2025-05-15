@@ -25,50 +25,58 @@ paises = {
     "Mundo todo": {"lat": 0.0, "lon": 0.0},
 }
 
-# 🌍 Seleção de entrada
+# 🌍 Tipo de entrada
 opcao = st.radio("Escolha como deseja inserir os dados:", ("Manual", "Por País"))
 
+# Coordenadas default
+if "lat" not in st.session_state:
+    st.session_state.lat = -32.0
+if "lon" not in st.session_state:
+    st.session_state.lon = 153.0
+
 if opcao == "Manual":
-    lat = st.number_input("Latitude", value=-32.0)
-    lon = st.number_input("Longitude", value=153.0)
+    lat = st.number_input("Latitude", value=st.session_state.lat, key="input_lat")
+    lon = st.number_input("Longitude", value=st.session_state.lon, key="input_lon")
 else:
-    pais_selecionado = st.selectbox("Escolha um país:", list(paises.keys()))
-    lat = paises[pais_selecionado]["lat"]
-    lon = paises[pais_selecionado]["lon"]
+    pais = st.selectbox("Escolha um país:", list(paises.keys()))
+    lat = paises[pais]["lat"]
+    lon = paises[pais]["lon"]
+    st.session_state.lat = lat
+    st.session_state.lon = lon
     st.write(f"Coordenadas selecionadas: Latitude {lat}, Longitude {lon}")
 
-# Raio e limite
+# Atualiza os valores da sessão
+st.session_state.lat = lat
+st.session_state.lon = lon
+
+# 🔹 Raio e limite
 raio = st.slider("Raio da busca (km)", 10, 500, 50)
 limite = st.slider("Número máximo de registros", 50, 5000, 1000)
 
-# Inicializa estado da sessão
-if "resultados" not in st.session_state:
-    st.session_state.resultados = None
-
-# Botão de busca
+# 🔍 Botão para buscar
 if st.button("🔍 Buscar Espécies"):
     st.session_state.resultados = buscar_ocorrencias_por_area(lat, lon, raio, limite)
 
-# Calcula distância entre dois pontos usando a fórmula de Haversine
+# Haversine
 def distancia_km(lat1, lon1, lat2, lon2):
-    R = 6371  # Raio da Terra em km
+    R = 6371
     dlat = radians(lat2 - lat1)
     dlon = radians(lon2 - lon1)
     a = sin(dlat / 2)**2 + cos(radians(lat1)) * cos(radians(lat2)) * sin(dlon / 2)**2
     c = 2 * atan2(sqrt(a), sqrt(1 - a))
     return R * c
 
-# Lista de espécies genéricas a serem ignoradas
+# 🔍 Blacklist
 blacklist = {"Amoebophrya", "Syndiniales", "Rudilemboides naglei"}
 
-# Mapa inicial com círculo de busca
-m = folium.Map(location=[lat, lon], zoom_start=8)
-folium.Circle(location=[lat, lon], radius=raio * 1000, color="blue", fill=True, fill_opacity=0.2).add_to(m)
+# Mapa interativo (inicial) -> Fazer ele mais iterativo foi ideia da Clara
+m = folium.Map(location=[st.session_state.lat, st.session_state.lon], zoom_start=8)
+folium.Circle([st.session_state.lat, st.session_state.lon], radius=raio*1000,
+              color="blue", fill=True, fill_opacity=0.2).add_to(m)
 
-# Filtra e plota os resultados
+# Mostrar dados anteriores (após clique no botão)
 resultados_validos = []
-
-if st.session_state.resultados:
+if st.session_state.get("resultados"):
     for r in st.session_state.resultados:
         ponto_lat = r.get("decimalLatitude")
         ponto_lon = r.get("decimalLongitude")
@@ -76,34 +84,63 @@ if st.session_state.resultados:
 
         if not ponto_lat or not ponto_lon or not especie:
             continue
-
         if especie in blacklist:
             continue
+        if distancia_km(st.session_state.lat, st.session_state.lon, ponto_lat, ponto_lon) > raio:
+            continue
 
-        # Verifica se está dentro do raio desejado
-        if distancia_km(lat, lon, ponto_lat, ponto_lon) <= raio:
-            resultados_validos.append(r)
-            folium.Marker(
-                location=[ponto_lat, ponto_lon],
-                popup=especie,
-                icon=folium.Icon(color="green", icon="leaf"),
-            ).add_to(m)
+        resultados_validos.append(r)
+        
+        #Mostrando referências no popup-> Aviso da Clara
+
+        dataset = r.get("datasetName", "Desconhecido")
+        licenca = r.get("license", "Licença não informada")
+        instituicao = r.get("rightsHolder", "Instituição não informada")
+        instituicao_code = r.get("institutionCode", "Código não informado")
+
+        popup_texto = f"""
+        <b>{especie}</b><br>
+        <i>Fonte:</i> {dataset}<br>
+        <i>Instituição:</i> {instituicao}<br>
+        <i>InstituiçãoCode:</i> {instituicao_code}<br>
+        <i>Licença:</i> {licenca}
+        """
+        folium.Marker(
+            location=[ponto_lat, ponto_lon],
+            popup=folium.Popup(popup_texto, max_width=250),
+            icon=folium.Icon(color="green", icon="leaf")
+        ).add_to(m)
 
     st.success(f"{len(resultados_validos)} ocorrências dentro da área selecionada.")
 
-# Exibe o mapa
-st_folium(m, width=1000, height=600)
+# Mapa interativo final
+output = st_folium(m, width=1000, height=600)
 
-# Exibe imagens das espécies encontradas
+# Atualiza lat/lon apenas no clique (sem atualizar resultado)
+if output.get("last_clicked"):
+    st.session_state.lat = output["last_clicked"]["lat"]
+    st.session_state.lon = output["last_clicked"]["lng"]
+    st.success(f"📍 Coordenadas selecionadas no mapa: ({st.session_state.lat:.4f}, {st.session_state.lon:.4f}) " )
+    
+    if st.button("🔍 Buscar Espécies Com Novas Coordenadas"):
+        st.session_state.resultados = buscar_ocorrencias_por_area(lat, lon, raio, limite)
+
+# Imagens -> Mostrando referências -> Aviso da Clara
 if resultados_validos:
     st.subheader("🔍 Espécies Encontradas na Área")
-
     especies_unicas = list({r.get("scientificName") for r in resultados_validos if r.get("scientificName")})
-    especies_exibir = especies_unicas[:100]
-
-    for especie in especies_exibir:
+    for especie in especies_unicas[:100]:
         imagem = buscar_imagem_especie(especie)
-        if imagem:
-            st.image(imagem, caption=especie, width=120)
-        else:
-            st.write(f"🖼️ Imagem não encontrada para {especie}.")
+        col1, col2 = st.columns([1, 3])
+        with col1:
+            if imagem:
+                st.image(imagem, caption=especie, width=120)
+            else:
+                st.image("https://upload.wikimedia.org/wikipedia/commons/6/65/No-Image-Placeholder.svg",
+                         caption=especie, width=120)
+
+        with col2:
+            st.markdown(f"**📁 Dataset:** {r.get('datasetName', 'Desconhecido')}")
+            # st.markdown(f"**🏛️ Instituição:** {r.get('institutionCode', 'Desconhecida')}") Ta dando sempre desconhecido
+
+        st.markdown("---")
