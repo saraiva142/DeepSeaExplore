@@ -8,7 +8,7 @@ from math import radians, cos, sin, sqrt, atan2
 st.set_page_config(page_title="Mapa de Espécies", page_icon="🗺️", layout="wide")
 st.title("🌍 Mapa de Espécies Marinhas")
 
-# 📍 Localizações pré-definidas
+# Localizações pré-definidas
 paises = {
     "Brasil": {"lat": -23.0, "lon": -43.0},
     "Austrália": {"lat": -32.0, "lon": 153.0},
@@ -25,10 +25,10 @@ paises = {
     "Mundo todo": {"lat": 0.0, "lon": 0.0},
 }
 
-# 🌍 Tipo de entrada
+# Tipo de entrada
 opcao = st.radio("Escolha como deseja inserir os dados:", ("Manual", "Por País"))
 
-# Coordenadas default
+# Coordenadas default -> Da lá na costa sudeste da Austrália
 if "lat" not in st.session_state:
     st.session_state.lat = -32.0
 if "lon" not in st.session_state:
@@ -49,15 +49,15 @@ else:
 st.session_state.lat = lat
 st.session_state.lon = lon
 
-# 🔹 Raio e limite
+# Raio e limite
 raio = st.slider("Raio da busca (km)", 10, 500, 50)
 limite = st.slider("Número máximo de registros", 50, 5000, 1000)
 
-# 🔍 Botão para buscar
+# Botão para buscar
 if st.button("🔍 Buscar Espécies"):
     st.session_state.resultados = buscar_ocorrencias_por_area(lat, lon, raio, limite)
 
-# Haversine
+# Haversine -> Distância entre dois pontos na superfície da Terra
 def distancia_km(lat1, lon1, lat2, lon2):
     R = 6371
     dlat = radians(lat2 - lat1)
@@ -97,6 +97,7 @@ if st.session_state.get("resultados"):
         licenca = r.get("license", "Licença não informada")
         instituicao = r.get("rightsHolder", "Instituição não informada")
         instituicao_code = r.get("institutionCode", "Código não informado")
+        dono_instituicao = r.get("ownerInstitutionCode")
 
         popup_texto = f"""
         <b>{especie}</b><br>
@@ -131,6 +132,7 @@ if resultados_validos:
     especies_unicas = list({r.get("scientificName") for r in resultados_validos if r.get("scientificName")})
     for especie in especies_unicas[:100]:
         imagem = buscar_imagem_especie(especie)
+        registro = next((r for r in resultados_validos if r.get("scientificName") == especie), None)
         col1, col2 = st.columns([1, 3])
         with col1:
             if imagem:
@@ -140,7 +142,17 @@ if resultados_validos:
                          caption=especie, width=120)
 
         with col2:
-            st.markdown(f"**📁 Dataset:** {r.get('datasetName', 'Desconhecido')}")
+            if registro:
+                dataset = registro.get('datasetName')
+                instituicao_code = registro.get("institutionCode")
+                license = registro.get("license")
+            else:
+                dataset = "Desconhecido"
+                instituicao_code = "Desconhecida"
+                license = "Licença não informada"
+            st.markdown(f"**📁 Dataset:** {dataset}")
+            st.markdown(f"**🏛️ Instituição:** {instituicao_code}")
+            st.markdown(f"**📜 Licença:** {license}")
             # st.markdown(f"**🏛️ Instituição:** {r.get('institutionCode', 'Desconhecida')}") Ta dando sempre desconhecido
 
         st.markdown("---")
